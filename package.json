@@ -1,8 +1,8 @@
 {
-  "name": "express",
+  "name": "allthenews",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -18,8 +18,14 @@
   "homepage": "https://github.com/trnguyen1510/All-the-News-That-s-Fit-to-Scrape#readme",
   "dependencies": {
     "axios": "^0.18.0",
-    "cheerio": "^1.0.0-rc.3",
-    "express-handlebars": "^3.0.2",
-    "mongoose": "^5.5.5"
+    "bluebird": "^3.5.4",
+    "body-parser": "^1.15.2",
+    "cheerio": "^0.22.0",
+    "express": "^4.14.0",
+    "express-handlebars": "^3.0.0",
+    "mongoose": "^4.7.2",
+    "morgan": "^1.7.0",
+    "path": "^0.12.7",
+    "request": "^2.79.0"
   }
 }

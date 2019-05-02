@@ -1,58 +1,46 @@
-'use strict';
+// Required NPM Packages
+var express = require('express');
+var path = require('path');
+var bodyParser = require('body-parser');
+var logger = require('morgan');
+var app = express();
+var mongoose = require('mongoose');
 
+var app = express();
 
-// dependencies
-// =============================================================
-const express = require('express'),
-      exphbs = require('express-handlebars'),
-      bodyParser = require('body-parser'),
-      logger = require('morgan'),
-      mongoose = require('mongoose'),
-      methodOverride = require('method-override');
+// Public Settings
+app.use(express.static(__dirname + '/public'));
+var port = process.env.PORT || 3000;
 
-// set up express app
-// =============================================================
-const PORT = process.env.PORT || 8000;
-let app = express();
+// Database
+require("./config/connection");
 
-app
-    .use(bodyParser.json())
-    .use(bodyParser.urlencoded({ extended:true }))
-    .use(bodyParser.text())
-    .use(bodyParser.json({ type: 'application/vnd.api+json' }))
-    .use(methodOverride('_method'))
-    .use(logger('dev'))
-    .use(express.static(__dirname + '/public'))
-    .engine('handlebars', exphbs({ defaultLayout: 'main' }))
-    .set('view engine', 'handlebars')
-    .use(require('./controllers'));
+// Use morgan logging
+app.use(logger("dev"));
 
-// configure mongoose and start the server
-// =============================================================
-// set mongoose to leverage promises
-mongoose.Promise = Promise;
+// BodyParser Settings
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+	extended: false
+}));
 
-const dbURI = process.env.MONGODB_URI || "mongodb://localhost:27017/newsArticles";
+// Set up Handlebar for views
+var expressHandlebars = require('express-handlebars');
+app.engine('handlebars', expressHandlebars({
+    defaultLayout: 'main'
+}));
+app.set('view engine', 'handlebars');
 
-// Database configuration with mongoose
-mongoose.set('useCreateIndex', true)
-mongoose.connect(dbURI, { useNewUrlParser: true });
+//Routes
+var routes = require('./controllers/news');
+app.use('/',routes);
 
-const db = mongoose.connection;
-
-// Show any mongoose errors
-db.on("error", function(error) {
-    console.log("Mongoose Error: ", error);
+//404 Error
+app.use(function(req, res) {
+	res.render('404');
 });
 
-// Once logged in to the db through mongoose, log a success message
-db.once("open", function() {
-    console.log("Mongoose connection successful.");
-    // start the server, listen on port 3000
-    app.listen(PORT, function() {
-        console.log("App running on port " + PORT);
-    });
+//Port
+app.listen(port, function() {
+    console.log("Listening on port:" + port);
 });
-
-module.exports = app;
-    
